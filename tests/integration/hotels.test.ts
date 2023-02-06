@@ -48,13 +48,14 @@ describe("GET /hotels", () => {
     expect(response.status).toBe(httpStatus.UNAUTHORIZED);
   });
 
-//   describe("when token is valid", () => {
-//     it("should respond with status 404 when there is no enrollment for given user", async () => {
-//       const token = await generateValidToken();
-//       const response = await server.get("/hotels").set("Authorization", `Bearer ${token}`);
-//       expect(response.status).toBe(httpStatus.NOT_FOUND);
-//     });
-//   });
+  //token valid on getHotels
+  describe("when token is valid", () => {
+    it("should respond with status 404 when there is no enrollment for given user", async () => {
+      const token = await generateValidToken();
+      const response = await server.get("/hotels").set("Authorization", `Bearer ${token}`);
+      expect(response.status).toBe(httpStatus.NOT_FOUND);
+    });
+  });
 });
 
 describe("GET /hotels/:hotelId", () => {
@@ -78,5 +79,16 @@ describe("GET /hotels/:hotelId", () => {
     const response = await server.get("/enrollments").set("Authorization", `Bearer ${token}`);
 
     expect(response.status).toBe(httpStatus.UNAUTHORIZED);
+  });
+
+  //token valid on getHotelById
+  describe("when token is valid", () => {
+    it("should respond with status 404 when there is no enrollment for given user", async () => {
+      const token = await generateValidToken();
+  
+      const response = await server.get("/hotels/1").set("Authorization", `Bearer ${token}`);
+  
+      expect(response.status).toBe(httpStatus.NOT_FOUND);
+    });
   });
 });
