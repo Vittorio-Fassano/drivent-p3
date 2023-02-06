@@ -2,21 +2,28 @@ import { Hotel, Room } from "@prisma/client";
 import { prisma } from "@/config";
 import faker from "@faker-js/faker";
 
-export function createHotel(params: Partial<Hotel> = {}): Promise<Hotel> {
+export async function createHotelandRoom(): Promise<Hotel & { Rooms: Room[] }> {
   return prisma.hotel.create({
     data: {
-      name: params.name || faker.name.findName(),
-      image: params.image || faker.image.imageUrl(),
+      name: faker.name.findName(),
+      image: faker.image.avatar(),
+      Rooms: {
+        createMany: {
+          data: [
+            {
+              name: faker.name.firstName(),
+              capacity: faker.datatype.number({ min: 1, max: 2 }),
+            },
+            {
+              name: faker.name.firstName(),
+              capacity: faker.datatype.number({ min: 1, max: 2 }),
+            },
+          ],
+        },
+      },
     },
-  });
-}
-
-export function createRoom(params: Partial<Room> = {}): Promise<Room> {
-  return prisma.room.create({
-    data: {
-      name: params.name || faker.lorem.sentence(),
-      capacity: params.capacity || faker.datatype.number({ min: 1, max: 3 }),
-      hotelId: params.hotelId,
+    include: {
+      Rooms: true,
     },
   });
 }

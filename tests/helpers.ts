@@ -14,10 +14,11 @@ export async function cleanDb() {
   await prisma.session.deleteMany({});
   await prisma.user.deleteMany({});
   await prisma.ticketType.deleteMany({});
+  await prisma.room.deleteMany({});
   await prisma.hotel.deleteMany({});
 }
 
-export async function generateValidToken(user?: User) {
+export async function generateValidToken(user?: User): Promise<string> {
   const incomingUser = user || (await createUser());
   const token = jwt.sign({ userId: incomingUser.id }, process.env.JWT_SECRET);
 

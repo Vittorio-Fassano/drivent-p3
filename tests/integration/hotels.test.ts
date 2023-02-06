@@ -11,7 +11,7 @@ import {
   createTicket,
   createPayment,
 } from "../factories";
-import { createHotel, createRoom } from "../factories/hotels-factory";
+import { createHotelandRoom } from "../factories/hotels-factory";
 import { cleanDb, generateValidToken } from "../helpers";
 
 beforeAll(async () => {
@@ -85,7 +85,30 @@ describe("GET /hotels", () => {
   
       expect(response.status).toBe(httpStatus.PAYMENT_REQUIRED);
     });
-    //
+    
+    //need to run test 
+    it("should respond with status 200 and hotels data when there is a ticket for given user", async () => {
+      const user = await createUser();
+      const token = await generateValidToken(user);
+      const enrollment = await createEnrollmentWithAddress(user);
+      const ticketType = await createTicketType();
+      await createTicket(enrollment.id, ticketType.id, TicketStatus.PAID);
+      await createHotelandRoom();
+
+      const response = await server.get("/hotels").set("Authorization", `Bearer ${token}`);
+
+      expect(response.body).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            id: expect.any(Number),
+            name: expect.any(String),
+            image: expect.any(String),
+            createdAt: expect.any(String),
+            updatedAt: expect.any(String),
+          })
+        ]),
+      );
+    });
   });
 });
 //
